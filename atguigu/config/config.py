@@ -23,3 +23,14 @@ class MinioConfig:
     minio_secret_key = os.getenv('MINIO_SECRET_KEY')
     minio_bucket_name = os.getenv('MINIO_BUCKET_NAME')
     minio_img_dir = os.getenv('MINIO_IMG_DIR')
+
+class BgeM3Config:
+    bge_m3_path = os.getenv("BGE_M3_PATH")
+    bge_m3 = os.getenv("BGE_M3")
+    bge_device = os.getenv("BGE_DEVICE")
+    bge_fp16 = True if os.getenv("BGE_FP16") in ["True","true","1"] else False
+
+class MilvusConfig:
+    milvus_url = os.getenv('MILVUS_URL')
+    chunks_collection = os.getenv('CHUNKS_COLLECTION')
+    item_name_collection = os.getenv('ITEM_NAME_COLLECTION')
