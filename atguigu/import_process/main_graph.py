@@ -62,7 +62,8 @@ class MainGraph:
 
 if __name__ == "__main__":
     init_state = {
-        "local_file_path": r"E:\test.md"
+        "local_file_path": r"D:\output0624\hak180产品安全手册.pdf",
+        "local_dir":r"D:\output0624"
     }
     result = MainGraph.create_and_run(init_state)
     logger.info(f"result: {result}")

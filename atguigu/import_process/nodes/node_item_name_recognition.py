@@ -37,6 +37,8 @@ class NodeItemNameRecognition(NodeBase):
         for chunk in chunks:
             chunk["item_name"] = item_name
 
+        with open(r"D:\output0624\hak180产品安全手册\item_name_chunks.json", "w", encoding="utf-8") as f:
+            f.write(json_format(chunks))
 
         return {
             "item_name":item_name,
@@ -117,14 +119,8 @@ class NodeItemNameRecognition(NodeBase):
                 index_type="SPARSE_INVERTED_INDEX",
                 metric_type="IP",
                 params={
-                    "inverted_index_algo": "DAAT_MAXSCORE",
                     # 高效的稀疏检索算法
-                    "normalize": True,
-                    # ↑ L2 归一化，让内积 (IP) 等价于余弦相似度
-                    "quantization": "none"
-                    # ↑ 关闭量化，保持原始精度：模型生成的向量已经压缩的一半的精度了（BGE_FP16=1），这里就不再压缩了
-                    # "quantization": "none" → 存储原始向量，不压缩
-                    # "quantization": "sq8" → 存储压缩后的向量（8-bit 量化
+                    "inverted_index_algo": "DAAT_MAXSCORE",
                 }
             )
 
