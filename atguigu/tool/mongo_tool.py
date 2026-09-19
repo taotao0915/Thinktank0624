@@ -81,6 +81,15 @@ def get_recent_messages(session_id,n=10):
     print(res,type(res))
     return list(res)
 
+def update_history_item_names(ids,item_names,rewritten_query=None):
+    mongo_tool = get_mongo_tool()
+    mongo_tool.update_many({"_id": {"$in": ids}},{
+        "$set": {
+            "item_names": item_names,
+            "rewritten_query": rewritten_query
+        }
+    })
+
 if __name__ == '__main__':
     # res = add_or_update_message("test_001", "user", "咨询下烫金机。")
     # print(res,type(res))
