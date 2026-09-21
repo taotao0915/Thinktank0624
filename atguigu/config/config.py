@@ -38,3 +38,7 @@ class MilvusConfig:
 class MongoConfig:
     mongo_url = os.getenv('MONGODB_URL')
     mongo_db_name = os.getenv('MONGODB_NAME')
+
+class McpConfig:
+    mcp_api_key = os.getenv('MCP_API_KEY')
+    mcp_base_url = os.getenv('MCP_BASE_URL')

@@ -1,8 +1,15 @@
 # atguigu/query_process/nodes/node_web_search_mcp.py
+import asyncio
+import json
+
+from agents.mcp import MCPServerStreamableHttp
 
 from atguigu.query_process.base import NodeBase
 from atguigu.query_process.state import QueryGraphState
 from atguigu.tool.logger import logger
+from config.config import McpConfig
+from tool.json_format_tool import json_format
+
 
 class NodeWebSearchMcp(NodeBase):
     """
@@ -13,14 +20,51 @@ class NodeWebSearchMcp(NodeBase):
     name: str = "node_web_search_mcp"
 
     def process(self, state: QueryGraphState):
-        """
-        节点逻辑
-        :param state: 工作流状态对象
-        :return: 更新后的状态对象
-        """
+        rewritten_query = state.get("rewritten_query")
+        if not rewritten_query:
+            logger.error("改写后的问题不存在，无法进行web检索")
+            raise ValueError("改写后的问题不存在，无法进行web检索")
 
-        # TODO
-        logger.info(f"【{self.name}】节点逻辑")
+        result = asyncio.run(self.run_mcp(rewritten_query))
+        data = json.loads(result.content[0].text).get("pages")
+        return {
+            "web_search_docs": [
+                {
+                    "content": item.get("snippet"),
+                    "title": item.get("title"),
+                    "url": item.get("url"),
+                    "source": "web"
+                }
+                for item in data
+            ]
+        }
 
-        # return state
-        return {"web_search_docs": []}
+    async def run_mcp(self,query,limit=10) -> None:
+        token = McpConfig.mcp_api_key
+        async with MCPServerStreamableHttp(
+                name="网络搜索服务",
+                params={
+                    "url": McpConfig.mcp_base_url,
+                    "headers": {"Authorization": f"Bearer {token}"},
+                    "timeout": 10,
+                },
+                cache_tools_list=True,
+                max_retry_attempts=3,
+                client_session_timeout_seconds=30 #从服务器开始连接一直到请求超时的总时间
+        ) as server:
+            result = await server.call_tool(tool_name="bailian_web_search",arguments={
+                "query": query,
+                "count": limit
+            })
+            return result
+
+if __name__ == "__main__":
+
+    init_state = {
+        "rewritten_query": "关于HAK180烫金机如何使用"
+    }
+
+    # 执行节点的业务调用
+    node_web_search_mcp = NodeWebSearchMcp()
+    result = node_web_search_mcp(init_state)
+    logger.info(json_format(result))
