@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+    <p>我爱你杨幂我爱你杨幂我爱你杨幂我爱你杨幂我爱你杨幂</p>
+    <button id="btn">点我发请求ajax请求</button>
+
+    <script>
+        const btn = document.getElementById("btn")
+
+        btn.onclick = async function () {
+            const result = await fetch("http://127.0.0.1:8000/get_data")
+            const data = result.json()
+            console.log(data)
+        }
+
+    </script>
+</body>
+
+
+</html>

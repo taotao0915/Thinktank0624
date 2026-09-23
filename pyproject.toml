@@ -21,6 +21,9 @@ dependencies = [
     "transformers>=4.45.0,<5.0.0",
     "pymilvus[model]>=3.0.1",
     "modelscope>=1.40.0",
+    "openai-agents>=0.22.3",
+    "mcp<2.0",
+    "dashscope>=1.27.6",
 ]
 
 [tool.uv.sources]
