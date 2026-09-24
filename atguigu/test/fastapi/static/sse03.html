@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<button id="btn">点击我开始发邮件</button>
+<br>
+用户问题：<input type="text" id="query_ipt"/>
+用户会话：<input type="text" id="session_ipt"/>
+
+<div id="content"></div>
+
+
+<script>
+    const btn = document.getElementById('btn')
+    btn.onclick = async function () {
+        const query = document.getElementById('query_ipt').value
+        const session_id = document.getElementById('session_ipt').value
+        const res = await fetch("http://localhost:8000/send_email",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                query,
+                "session_id":session_id
+            })
+        })
+        data = await res.json()
+        console.log(data)
+
+
+        // new EventSource("http://localhost:8000/sse02?session_id="+session_id)
+        const es = new EventSource(`http://localhost:8000/sse02?session_id=${session_id}`)
+        // 系统事件
+        // es.onmessage = function (e) {
+        //     if (e.data === "None"){
+        //         es.close()
+        //         return;
+        //     }
+        //     document.getElementById('content').innerHTML += e.data + "<br>"
+        //
+        // }
+
+        // 添加自定义事件
+        es.addEventListener("progress",function (e) {
+            document.getElementById('content').innerHTML += e.data + "<br>"
+        })
+
+        es.addEventListener("final",function (e) {
+            document.getElementById('content').innerHTML += e.data + "<br>"
+            es.close()
+        })
+
+        es.addEventListener("error",function (e) {
+            document.getElementById('content').innerHTML += e.data + "<br>"
+            es.close()
+        })
+
+    }
+
+
+
+
+
+</script>
+
+</body>
+</html>
