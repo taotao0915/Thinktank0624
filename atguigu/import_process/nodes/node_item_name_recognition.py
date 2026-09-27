@@ -37,8 +37,8 @@ class NodeItemNameRecognition(NodeBase):
         for chunk in chunks:
             chunk["item_name"] = item_name
 
-        with open(r"D:\output0624\hak180产品安全手册\item_name_chunks.json", "w", encoding="utf-8") as f:
-            f.write(json_format(chunks))
+        # with open(r"D:\output0624\hak180产品安全手册\item_name_chunks.json", "w", encoding="utf-8") as f:
+        #     f.write(json_format(chunks))
 
         return {
             "item_name":item_name,

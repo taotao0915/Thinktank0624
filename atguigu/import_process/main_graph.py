@@ -56,7 +56,7 @@ class MainGraph:
         return result
 
     @classmethod
-    def create_and_run(cls, state: ImportGraphState):
+    def create_and_run(cls, state):
         return cls().run(state)
 
 
