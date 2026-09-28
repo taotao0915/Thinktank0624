@@ -1,6 +1,7 @@
+import time
 from collections import defaultdict
 from typing import Dict, List
-
+from queue import Queue
 # ---------------------------
 # 内存态任务追踪（单进程）
 # ---------------------------
@@ -28,7 +29,7 @@ TASK_STATUS_FAILED = "failed"
 # 节点名 -> 中文名映射（用于前端展示）
 # 说明：这里的 key 应与 LangGraph 的 add_node("xxx", ...) 中的节点名一致。
 _NODE_NAME_TO_CN: Dict[str, str] = {
-    "upload_file": "开始上传文件",  
+    "upload_file": "开始上传文件",
     "node_entry": "检查文件",
     "node_pdf_to_md": "PDF转Markdown",
     "node_md_img": "Markdown图片处理",
@@ -154,3 +155,30 @@ def get_task_info(task_id: str) -> Dict[str, any]:
         "done_list": get_done_task_list(task_id),
         "durations": get_node_durations(task_id)
     }
+
+
+
+#队列的操作 实现sse
+queue_dict = {}
+def create_queue(task_id):
+    if task_id not in queue_dict:
+        queue_dict[task_id] = Queue()
+    return queue_dict.get(task_id)
+
+
+def put_data(task_id,event,data):
+    while queue_dict.get(task_id) is None:
+        time.sleep(1)
+    q = queue_dict.get(task_id)
+    q.put({"event":event,"data":data})
+
+
+
+def get_data(task_id):
+    while queue_dict.get(task_id) is None:
+        time.sleep(1)
+    q = queue_dict.get(task_id)
+    return q.get()
+
+
+

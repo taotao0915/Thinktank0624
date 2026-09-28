@@ -78,7 +78,7 @@ def add_or_update_message(session_id,role,text,rewritten_query=None,item_names=N
 def get_recent_messages(session_id,n=10):
     mongo_tool = get_mongo_tool()
     res = mongo_tool.find({"session_id": session_id}).sort("ts", -1).limit(n)
-    print(res,type(res))
+    # print(res,type(res))
     return list(res)
 
 def update_history_item_names(ids,item_names,rewritten_query=None):

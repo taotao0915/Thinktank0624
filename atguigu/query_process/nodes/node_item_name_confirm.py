@@ -73,13 +73,13 @@ class NodeItemNameConfirm(NodeBase):
         confirm_item_names = [
             item.get("search_item_name")
             for item in search_item_names
-            if item.get("score") >= 0.85
+            if item.get("score") >= 0.75
         ]
         # 候选，可能是这些商品名字，后期需要用户来确认
         option_item_names = [
             item.get("search_item_name")
             for item in search_item_names
-            if item.get("score") >= 0.6 and item.get("score") < 0.85
+            if item.get("score") >= 0.6 and item.get("score") < 0.75
         ]
         if confirm_item_names:
             final_item_names = confirm_item_names
