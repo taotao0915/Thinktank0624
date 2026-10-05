@@ -96,7 +96,7 @@ class NodeSearchEmbeddingHyde(NodeBase):
 if __name__ == "__main__":
     init_state = {
         "rewritten_query": "关于HAK180烫金机如何使用",
-        "item_names": ["HAK180烫金机（型号：D01WD7001-00，品牌：SCHN）"]
+        "item_names": ["HAK180烫金机"]
     }
     node_search_embedding_hyde = NodeSearchEmbeddingHyde()
     result = node_search_embedding_hyde(init_state)

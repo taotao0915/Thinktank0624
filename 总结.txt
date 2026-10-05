@@ -1,0 +1,22 @@
+这个项目是一个RAG项目，旨在通过检索增强生成，解决模型的时效性问题、垂直领域知识不足的问题，减少模型的幻觉问题。
+
+
+每个类的功能介绍：
+
+import模块：
+    node_entry.py：入口模块，传入pdf/md文件
+    node_pdf_to_md.py：如果传入的是pdf文件，则通过mineru将pdf文件转成md文件，下载后解压至相关目录，轮询方式，避免拿不到zip文件
+    node_md_img.py：用正则拿到所有图片的上下文，通过llm生成图片的概要，再上传图片至minio服务器，最后把图片替换成minio的url
+    node_document_split.py：将md文件进行粗切、细切，粗切是按标题级别进行切分，细切是按递归切分器来切的
+    node_item_name_recognition.py：取前面k个chunks的内容，通过llm识别出item_name即主体商品名，通过bgem3模型向量化，把item_name存入milvus向量数据库
+    node_bge_embedding.py：将chunks的内容通过bgem3模型向量化
+    node_import_milvus.py：将向量化后的chunks存入milvus向量数据库
+
+query模块：
+    node_item_namme_confirm.py：通过llm对用户输入的item_name进行确认，确认后再进行向量化查询
+    node_search_embedding.py:通过bgem3模型将用户输入的query向量化，然后在milvus向量数据库中进行相似度搜索，返回topk的chunks
+    node_search_embedding_hyde.py:假设性文档检索，先通过llm生成假设性文档，再将假设性文档向量化，最后在milvus向量数据库中进行相似度搜索，返回topk的chunks
+    node_web_search_mcp.py:通过mcp搜索引擎进行搜索，返回topk的chunks
+    node_rrf.py:通过RRF倒数排名融合算法，将向量检索与假设性文档检索的结果进行整合，返回chunks
+    node_rerrank.py:通过qwen的rerank模型对RRF融合后的结果进行重排序，返回最终的chunks
+    node_answer_output.py:通过llm对最终的历史圣诞、chunks、item_name等组装prompt进行回答生成，返回最终的答案
