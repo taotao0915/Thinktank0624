@@ -33,7 +33,13 @@ class NodeRerank(NodeBase):
         # print(json_format(merged_chunks))
 
         #调用重排序工具，对merged_chunks进行重排序
-        merged_chunks_content = [chunk.get("content",'') for chunk in merged_chunks]
+        # merged_chunks_content = [chunk.get("content",'') for chunk in merged_chunks]
+        # 终极安全版：过滤空数据，且确保 100% 全是有效字符串
+        merged_chunks_content = [
+            str(chunk["content"]).strip()
+            for chunk in merged_chunks
+            if chunk.get("content") is not None and isinstance(chunk["content"], (str, int, float)) and str(chunk["content"]).strip()
+        ]
         res = text_rerank(query=rewritten_query,texts=merged_chunks_content,limit=len(merged_chunks_content))
         # print(json_format(res))
 
@@ -43,7 +49,7 @@ class NodeRerank(NodeBase):
         # print(json_format(merged_chunks))
 
         #对chunks进行按照分数倒序排序
-        rerank_chunks = sorted(merged_chunks, key=lambda x:x.get("score"),reverse=True)
+        rerank_chunks = sorted(merged_chunks, key=lambda x:x.get("score") or 0.0,reverse=True)
         # print(json_format(rerank_chunks))
 
 
